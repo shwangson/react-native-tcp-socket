@@ -78,6 +78,8 @@ export default class Socket extends EventEmitter {
         /** @private */
         this._bytesWritten = 0;
         /** @private */
+        this._totalReceived = "";
+        /** @private */
         this._connecting = false;
         /** @private */
         this._pending = true;
@@ -442,7 +444,14 @@ export default class Socket extends EventEmitter {
             const bufferData = Buffer.from(evt.data, 'base64');
             this._bytesRead += bufferData.byteLength;
             const finalData = this._encoding ? bufferData.toString(this._encoding) : bufferData;
-            this.emit('data', finalData);
+            //转字符串
+            const _received = Uint8ArrayTostring(finalData);
+            if (_received.endsWith("<EOF>")) {
+                this._totalReceived = `${this._totalReceived}${_received.substring(0, _received.length - 5)}`;
+                this.emit('data', this._totalReceived);
+            } else {
+                this._totalReceived = `${this._totalReceived}${_received}`;
+            }
         } else {
             // If the socket is paused, save the data events for later
             this._pausedDataEvents.push(evt);
@@ -513,3 +522,36 @@ export default class Socket extends EventEmitter {
         this._unregisterEvents();
     }
 }
+
+function Uint8ArrayTostring(array){
+    var out, i, len, c;
+    var char2, char3;
+    let tempAry = array;
+    out = "";
+    len = tempAry.length;
+    i = 0;
+    while (i < len) {
+        c = tempAry[i++];
+        switch (c >> 4) {
+            case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
+                // 0xxxxxxx
+                out += String.fromCharCode(c);
+                break;
+            case 12: case 13:
+                // 110x xxxx   10xx xxxx
+                char2 = tempAry[i++];
+                out += String.fromCharCode(((c & 0x1F) << 6) | (char2 & 0x3F));
+                break;
+            case 14:
+                // 1110 xxxx  10xx xxxx  10xx xxxx
+                char2 = tempAry[i++];
+                char3 = tempAry[i++];
+                out += String.fromCharCode(((c & 0x0F) << 12) |
+                    ((char2 & 0x3F) << 6) |
+                    ((char3 & 0x3F) << 0));
+                break;
+        }
+    }
+    return out;
+ }
+
