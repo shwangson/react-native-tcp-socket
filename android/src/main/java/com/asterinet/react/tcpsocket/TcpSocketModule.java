@@ -9,8 +9,8 @@ import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
 import android.util.Base64;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+// import androidx.annotation.NonNull;
+// import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -48,7 +48,7 @@ public class TcpSocketModule extends ReactContextBaseJavaModule {
     }
 
     @Override
-    public @NonNull
+    public 
     String getName() {
         return TAG;
     }
@@ -64,7 +64,7 @@ public class TcpSocketModule extends ReactContextBaseJavaModule {
     @SuppressLint("StaticFieldLeak")
     @SuppressWarnings("unused")
     @ReactMethod
-    public void connect(@NonNull final Integer cId, @NonNull final String host, @NonNull final Integer port, @NonNull final ReadableMap options) {
+    public void connect( final Integer cId,  final String host,  final Integer port,  final ReadableMap options) {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
@@ -92,7 +92,7 @@ public class TcpSocketModule extends ReactContextBaseJavaModule {
     @SuppressLint("StaticFieldLeak")
     @SuppressWarnings("unused")
     @ReactMethod
-    public void startTLS(final int cId, @NonNull final ReadableMap tlsOptions) {
+    public void startTLS(final int cId,  final ReadableMap tlsOptions) {
         TcpSocketClient socketClient = (TcpSocketClient) socketMap.get(cId);
         // Not yet connected
         if (socketClient == null) {
@@ -109,7 +109,7 @@ public class TcpSocketModule extends ReactContextBaseJavaModule {
     @SuppressLint("StaticFieldLeak")
     @SuppressWarnings("unused")
     @ReactMethod
-    public void write(final int cId, @NonNull final String base64String, final int msgId) {
+    public void write(final int cId,  final String base64String, final int msgId) {
         TcpSocketClient socketClient = getTcpClient(cId);
         byte[] data = Base64.decode(base64String, Base64.NO_WRAP);
         socketClient.write(msgId, data);
@@ -168,7 +168,7 @@ public class TcpSocketModule extends ReactContextBaseJavaModule {
 
     @SuppressWarnings("unused")
     @ReactMethod
-    public void setNoDelay(@NonNull final Integer cId, final boolean noDelay) {
+    public void setNoDelay( final Integer cId, final boolean noDelay) {
         final TcpSocketClient client = getTcpClient(cId);
         try {
             client.setNoDelay(noDelay);
@@ -179,7 +179,7 @@ public class TcpSocketModule extends ReactContextBaseJavaModule {
 
     @SuppressWarnings("unused")
     @ReactMethod
-    public void setKeepAlive(@NonNull final Integer cId, final boolean enable, final int initialDelay) {
+    public void setKeepAlive( final Integer cId, final boolean enable, final int initialDelay) {
         final TcpSocketClient client = getTcpClient(cId);
         try {
             client.setKeepAlive(enable, initialDelay);
@@ -249,7 +249,7 @@ public class TcpSocketModule extends ReactContextBaseJavaModule {
      * "cellular" -> Cellular
      * etc...
      */
-    private void selectNetwork(@Nullable final String iface, @Nullable final String ipAddress) throws InterruptedException, IOException {
+    private void selectNetwork( final String iface,  final String ipAddress) throws InterruptedException, IOException {
         currentNetwork.setNetwork(null);
         if (iface == null) return;
         if (ipAddress != null) {
@@ -299,18 +299,18 @@ public class TcpSocketModule extends ReactContextBaseJavaModule {
     }
 
     private static class CurrentNetwork {
-        @Nullable
+        
         Network network = null;
 
         private CurrentNetwork() {
         }
 
-        @Nullable
+        
         private Network getNetwork() {
             return network;
         }
 
-        private void setNetwork(@Nullable final Network network) {
+        private void setNetwork( final Network network) {
             this.network = network;
         }
     }
