@@ -16,4 +16,5 @@ android {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'  // From node_modules
+    implementation 'androidx.annotation:annotation:1.1.0'
 }
